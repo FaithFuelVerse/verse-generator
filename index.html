@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Bible Verse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Styles embedded directly -->
+    <style>
+        :root {
+            --primary-color: #6a3d9a; /* Deeper purple */
+            --secondary-color: #f4e9fc; /* Very light lavender */
+            --text-color: #333;
+            --quote-bg: #ffffff; /* White background for quote */
+            --quote-border: #cab2e2; /* Lighter purple for border */
+            --transition-speed: 400ms; /* Speed for fade effect */
+            --entry-delay: 200ms; /* Delay before entry animation starts */
+            --entry-duration: 800ms; /* Duration of entry animation */
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-color: #e8eaf6;
+            transition: background-image var(--transition-speed) ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrollbars during animation */
+        }
+
+        /* --- Entry Animation Keyframes --- */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px 45px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.05);
+
+            /* --- Apply Entry Animation --- */
+            opacity: 0; /* Start hidden */
+            animation: fadeInUp var(--entry-duration) ease-out var(--entry-delay) forwards;
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin-bottom: 30px;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        blockquote {
+            border-left: 6px solid var(--quote-border);
+            margin: 35px 0;
+            padding: 25px 30px;
+            background-color: var(--quote-bg);
+            border-radius: 0 8px 8px 0;
+            min-height: 80px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            opacity: 1;
+            transition: opacity var(--transition-speed) ease-in-out;
+        }
+
+        blockquote.fade-out {
+            opacity: 0;
+        }
+
+        blockquote p#verseText {
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+            font-size: 1.2em;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        cite {
+            display: block;
+            font-style: normal;
+            font-weight: bold;
+            color: #777;
+            font-size: 0.9em;
+            text-align: right;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* --- Button Styles --- */
+        .button-container { /* Flex container for buttons */
+             display: flex;
+             justify-content: center; /* Center buttons */
+             gap: 15px; /* Space between buttons */
+             margin-top: 20px;
+             flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px; /* Adjusted padding slightly */
+            font-size: 1.0em; /* Adjusted size slightly */
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 4px 12px rgba(106, 61, 154, 0.3);
+            display: inline-flex; /* Align icon and text */
+            align-items: center;
+            justify-content: center;
+            min-width: 150px; /* Give buttons a minimum width */
+        }
+
+        button .icon {
+            margin-right: 8px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        button#prevVerseBtn .icon { /* Specific icon margin for prev button */
+             margin-right: 0;
+             margin-left: 8px;
+        }
+
+
+        button:hover {
+            background-color: #5a2d82;
+            box-shadow: 0 6px 16px rgba(106, 61, 154, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button#newVerseBtn:hover .icon {
+             transform: rotate(360deg);
+        }
+         button#prevVerseBtn:hover .icon {
+             transform: translateX(-3px); /* Slight move left on hover */
+        }
+
+
+        button:active {
+            background-color: #452364;
+            transform: translateY(0px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(106, 61, 154, 0.3);
+        }
+
+         /* Style for disabled button */
+        button:disabled {
+            background-color: #bca0d4; /* Lighter, muted purple */
+            opacity: 0.7;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        button:disabled:hover { /* Prevent hover effects when disabled */
+             background-color: #bca0d4;
+             box-shadow: none;
+             transform: none;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Daily Inspiration</h1>
+        <p class="subtitle">Click the button below to reveal a random Bible verse.</p>
+
+        <blockquote id="verseDisplay">
+            <p id="verseText">Your verse will appear here...</p>
+            <cite id="verseReference"></cite>
+        </blockquote>
+
+        <!-- Button Container -->
+        <div class="button-container">
+             <!-- Added Previous Button -->
+            <button id="prevVerseBtn" disabled><span class="icon">←</span> Previous</button>
+            <button id="newVerseBtn"><span class="icon">📖</span>Next Verse</button> <!-- Changed text slightly -->
+        </div>
+    </div>
+
+    <!-- JavaScript embedded directly -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Bible Verses Data ---
+            // Includes general verses, plus specific ones for marriage, study/strength, powerful themes, and faith/hope/positivity
+            const bibleVerses = [
+                // General Verses (Subset)
+                { text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.", reference: "John 3:16" },
+                { text: "The Lord is my shepherd; I shall not want.", reference: "Psalm 23:1" },
+                { text: "Trust in the Lord with all your heart, and do not lean on your own understanding.", reference: "Proverbs 3:5" },
+                { text: "For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.", reference: "Jeremiah 29:11" },
+                { text: "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness,", reference: "Galatians 5:22" },
+                { text: "And we know that for those who love God all things work together for good, for those who are called according to his purpose.", reference: "Romans 8:28" },
+                { text: "Your word is a lamp to my feet and a light to my path.", reference: "Psalm 119:105" },
+                { text: "Ask, and it will be given to you; seek, and you will find; knock, and it will be opened to you.", reference: "Matthew 7:7" },
+                { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", reference: "Matthew 11:28" },
+                { text: "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.", reference: "John 14:27" },
+                { text: "Casting all your anxieties on him, because he cares for you.", reference: "1 Peter 5:7" },
+                { text: "The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.", reference: "Lamentations 3:22-23" },
+                { text: "For the wages of sin is death, but the free gift of God is eternal life in Christ Jesus our Lord.", reference: "Romans 6:23" },
+                { text: "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.", reference: "1 John 1:9" },
+                { text: "For by grace you have been saved through faith. And this is not your own doing; it is the gift of God,", reference: "Ephesians 2:8" },
+                { text: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude.", reference: "1 Corinthians 13:4" },
+                { text: "And now these three remain: faith, hope and love. But the greatest of these is love.", reference: "1 Corinthians 13:13" },
+                { text: "Let everything that has breath praise the Lord! Praise the Lord!", reference: "Psalm 150:6" },
+                { text: "The heavens declare the glory of God, and the sky above proclaims his handiwork.", reference: "Psalm 19:1" },
+                { text: "Rejoice always, pray without ceasing, give thanks in all circumstances; for this is the will of God in Christ Jesus for you.", reference: "1 Thessalonians 5:16-18" },
+                { text: "Do not be conformed to this world, but be transformed by the renewal of your mind, that by testing you may discern what is the will of God, what is good and acceptable and perfect.", reference: "Romans 12:2" },
+                { text: "The heart of man plans his way, but the Lord establishes his steps.", reference: "Proverbs 16:9" },
+                { text: "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.", reference: "Galatians 6:9" },
+                { text: "Therefore, if anyone is in Christ, he is a new creation. The old has passed away; behold, the new has come.", reference: "2 Corinthians 5:17" },
+
+                // --- Verses for Married Life ---
+                { text: "Husbands, love your wives, just as Christ loved the church and gave himself up for her.", reference: "Ephesians 5:25" },
+                { text: "However, each one of you also must love his wife as he loves himself, and the wife must respect her husband.", reference: "Ephesians 5:33" },
+                { text: "Wives, submit yourselves to your husbands, as is fitting in the Lord. Husbands, love your wives and do not be harsh with them.", reference: "Colossians 3:18-19" },
+                { text: "He who finds a wife finds what is good and receives favor from the Lord.", reference: "Proverbs 18:22" },
+                { text: "Therefore a man shall leave his father and his mother and hold fast to his wife, and they shall become one flesh.", reference: "Genesis 2:24" },
+                { text: "The husband should fulfill his marital duty to his wife, and likewise the wife to her husband.", reference: "1 Corinthians 7:3" },
+                { text: "A wife of noble character who can find? She is worth far more than rubies.", reference: "Proverbs 31:10" },
+                { text: "Husbands, in the same way be considerate as you live with your wives, and treat them with respect...", reference: "1 Peter 3:7" },
+                { text: "Marriage should be honored by all, and the marriage bed kept pure...", reference: "Hebrews 13:4" },
+                { text: "Therefore what God has joined together, let no one separate.", reference: "Mark 10:9" },
+                { text: "Two are better than one, because they have a good return for their labor.", reference: "Ecclesiastes 4:9" },
+                { text: "Many waters cannot quench love; rivers cannot sweep it away.", reference: "Song of Solomon 8:7" },
+                { text: "Above all, love each other deeply, because love covers over a multitude of sins.", reference: "1 Peter 4:8" },
+                { text: "Be completely humble and gentle; be patient, bearing with one another in love.", reference: "Ephesians 4:2" },
+
+                // --- Verses for Strength/Wisdom (Exams, Study) ---
+                { text: "If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you.", reference: "James 1:5" },
+                { text: "For the Lord gives wisdom; from his mouth come knowledge and understanding.", reference: "Proverbs 2:6" },
+                { text: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God... will guard your hearts and your minds in Christ Jesus.", reference: "Philippians 4:6-7" },
+                { text: "but those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint.", reference: "Isaiah 40:31" },
+                { text: "For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.", reference: "2 Timothy 1:7" },
+                { text: "Commit to the Lord whatever you do, and he will establish your plans.", reference: "Proverbs 16:3" },
+                { text: "Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.", reference: "Joshua 1:9" },
+                { text: "I can do all things through him who strengthens me.", reference: "Philippians 4:13" },
+                { text: "...in all your ways submit to him, and he will make your paths straight.", reference: "Proverbs 3:6" },
+                { text: "Whatever you do, work at it with all your heart, as working for the Lord, not for human masters,", reference: "Colossians 3:23" },
+                { text: "I have more insight than all my teachers, for I meditate on your statutes.", reference: "Psalm 119:99" },
+                { text: "The unfolding of your words gives light; it gives understanding to the simple.", reference: "Psalm 119:130" },
+                { text: "He gives wisdom to the wise and knowledge to the discerning.", reference: "Daniel 2:21" },
+                { text: "But seek first his kingdom and his righteousness, and all these things will be given to you as well.", reference: "Matthew 6:33" },
+                { text: "So whether you eat or drink or whatever you do, do it all for the glory of God.", reference: "1 Corinthians 10:31" },
+                { text: "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness,", reference: "2 Timothy 3:16" },
+                { text: "Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.", reference: "Isaiah 41:10" },
+
+                // --- Additional Powerful Verses ---
+                { text: "The Lord is my light and my salvation; whom shall I fear? The Lord is the stronghold of my life; of whom shall I be afraid?", reference: "Psalm 27:1" },
+                { text: "God is our refuge and strength, an ever-present help in trouble.", reference: "Psalm 46:1" },
+                { text: "The Lord sits enthroned over the flood; the Lord sits enthroned as king forever.", reference: "Psalm 29:10" },
+                { text: "He alone is my rock and my salvation, my fortress; I shall not be greatly shaken.", reference: "Psalm 62:2" },
+                { text: "What then shall we say to these things? If God is for us, who can be against us?", reference: "Romans 8:31" },
+                { text: "No, in all these things we are more than conquerors through him who loved us.", reference: "Romans 8:37" },
+                { text: "For I am convinced that neither death nor life... nor anything else in all creation, will be able to separate us from the love of God in Christ Jesus our Lord.", reference: "Romans 8:38-39" },
+                { text: "Be watchful, stand firm in the faith, act like men, be strong.", reference: "1 Corinthians 16:13" },
+                { text: "Finally, be strong in the Lord and in the strength of his might.", reference: "Ephesians 6:10" },
+                { text: "Put on the whole armor of God, that you may be able to stand against the schemes of the devil.", reference: "Ephesians 6:11" },
+                { text: "...take up the shield of faith, with which you can extinguish all the flaming darts of the evil one;", reference: "Ephesians 6:16" },
+                { text: "For the word of God is living and active, sharper than any two-edged sword...", reference: "Hebrews 4:12" },
+                { text: "Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.", reference: "Hebrews 4:16" },
+                { text: "Submit yourselves therefore to God. Resist the devil, and he will flee from you.", reference: "James 4:7" },
+                { text: "The Lord your God is in your midst, a mighty one who will save; he will rejoice over you with gladness; he will quiet you by his love; he will exult over you with loud singing.", reference: "Zephaniah 3:17" },
+                { text: "Ah, Lord God! It is you who have made the heavens and the earth by your great power and by your outstretched arm! Nothing is too hard for you.", reference: "Jeremiah 32:17" },
+                { text: "The name of the Lord is a strong tower; the righteous man runs into it and is safe.", reference: "Proverbs 18:10" },
+                { text: "When you pass through the waters, I will be with you; and through the rivers, they shall not overwhelm you; when you walk through fire you shall not be burned, and the flame shall not consume you.", reference: "Isaiah 43:2" },
+                { text: "No weapon that is fashioned against you shall succeed, and you shall confute every tongue that rises against you in judgment.", reference: "Isaiah 54:17" },
+                { text: "The Lord will fight for you; you need only to be still.", reference: "Exodus 14:14" },
+                { text: "For where two or three are gathered in my name, there am I among them.", reference: "Matthew 18:20" },
+                { text: "All authority in heaven and on earth has been given to me.", reference: "Matthew 28:18" },
+                { text: "Behold, I have given you authority to tread on serpents and scorpions, and over all the power of the enemy, and nothing shall hurt you.", reference: "Luke 10:19" },
+                { text: "I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world.", reference: "John 16:33" },
+                { text: "But you will receive power when the Holy Spirit has come upon you...", reference: "Acts 1:8" },
+                { text: "For our struggle is not against flesh and blood, but against the rulers, against the authorities, against the powers of this dark world and against the spiritual forces of evil in the heavenly realms.", reference: "Ephesians 6:12" },
+                { text: "...being confident of this, that he who began a good work in you will carry it on to completion until the day of Christ Jesus.", reference: "Philippians 1:6" },
+                { text: "My God will supply every need of yours according to his riches in glory in Christ Jesus.", reference: "Philippians 4:19" },
+                { text: "But the Lord is faithful. He will establish you and guard you against the evil one.", reference: "2 Thessalonians 3:3" },
+                //{ text: "For God gave us a spirit not of fear but of power and love and self-control.", reference: "2 Timothy 1:7" }, // Duplicate of Strength/Wisdom section
+                { text: "Jesus Christ is the same yesterday and today and forever.", reference: "Hebrews 13:8" },
+                { text: "The Lord is my helper; I will not fear; what can man do to me?", reference: "Hebrews 13:6" },
+                { text: "Humble yourselves, therefore, under the mighty hand of God so that at the proper time he may exalt you,", reference: "1 Peter 5:6" },
+                { text: "Little children, you are from God and have overcome them, for he who is in you is greater than he who is in the world.", reference: "1 John 4:4" },
+                { text: "For everyone who has been born of God overcomes the world. And this is the victory that has overcome the world—our faith.", reference: "1 John 5:4" },
+                { text: "And call upon me in the day of trouble; I will deliver you, and you shall glorify me.", reference: "Psalm 50:15" },
+                { text: "The Lord redeems the life of his servants; none of those who take refuge in him will be condemned.", reference: "Psalm 34:22" },
+                { text: "He heals the brokenhearted and binds up their wounds.", reference: "Psalm 147:3" },
+                { text: "Wait for the Lord; be strong, and let your heart take courage; wait for the Lord!", reference: "Psalm 27:14" },
+                { text: "With man this is impossible, but with God all things are possible.", reference: "Matthew 19:26" },
+                { text: "Truly I tell you, if you have faith as small as a mustard seed, you can say to this mountain, ‘Move from here to there,’ and it will move. Nothing will be impossible for you.", reference: "Matthew 17:20" },
+                { text: "Have faith in God.", reference: "Mark 11:22" },
+                { text: "Therefore I tell you, whatever you ask in prayer, believe that you have received it, and it will be yours.", reference: "Mark 11:24" },
+                { text: "For nothing will be impossible with God.", reference: "Luke 1:37" },
+                { text: "Behold, I am the Lord, the God of all flesh. Is anything too hard for me?", reference: "Jeremiah 32:27" },
+                { text: "Then Job answered the Lord and said: 'I know that you can do all things, and that no purpose of yours can be thwarted.'", reference: "Job 42:1-2" },
+                { text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life, which God has promised to those who love him.", reference: "James 1:12" },
+                //{ text: "He gives strength to the weary and increases the power of the weak.", reference: "Isaiah 40:29" }, // Near duplicate of Isaiah 40:31
+                { text: "The eternal God is your refuge, and underneath are the everlasting arms.", reference: "Deuteronomy 33:27" },
+
+                // --- NEW Verses on Faith, Positiveness, Hope ---
+                { text: "Now faith is confidence in what we hope for and assurance about what we do not see.", reference: "Hebrews 11:1" },
+                { text: "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.", reference: "Romans 15:13" },
+                { text: "Praise be to the God and Father of our Lord Jesus Christ! In his great mercy he has given us new birth into a living hope through the resurrection of Jesus Christ from the dead.", reference: "1 Peter 1:3" },
+                { text: "Finally, brothers and sisters, whatever is true, whatever is noble, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think about such things.", reference: "Philippians 4:8" },
+                { text: "But blessed is the one who trusts in the Lord, whose confidence is in him.", reference: "Jeremiah 17:7" },
+                { text: "Be strong and take heart, all you who hope in the Lord.", reference: "Psalm 31:24" },
+                { text: "And hope does not put us to shame, because God’s love has been poured out into our hearts through the Holy Spirit, who has been given to us.", reference: "Romans 5:5" },
+                { text: "Let us hold unswervingly to the hope we profess, for he who promised is faithful.", reference: "Hebrews 10:23" },
+                { text: "But thanks be to God! He gives us the victory through our Lord Jesus Christ.", reference: "1 Corinthians 15:57" },
+                { text: "You make known to me the path of life; you will fill me with joy in your presence, with eternal pleasures at your right hand.", reference: "Psalm 16:11" },
+                { text: "Nehemiah said, 'Go and enjoy choice food and sweet drinks, and send some to those who have nothing prepared... Do not grieve, for the joy of the Lord is your strength.'", reference: "Nehemiah 8:10b" },
+                { text: "Be joyful in hope, patient in affliction, faithful in prayer.", reference: "Romans 12:12" },
+                { text: "Why, my soul, are you downcast? Why so disturbed within me? Put your hope in God, for I will yet praise him, my Savior and my God.", reference: "Psalm 42:11" },
+                { text: "You will keep in perfect peace those whose minds are steadfast, because they trust in you.", reference: "Isaiah 26:3" },
+                { text: "Therefore we do not lose heart. Though outwardly we are wasting away, yet inwardly we are being renewed day by day.", reference: "2 Corinthians 4:16" },
+                { text: "The Lord has done it this very day; let us rejoice today and be glad.", reference: "Psalm 118:24" },
+                { text: "This is the confidence we have in approaching God: that if we ask anything according to his will, he hears us.", reference: "1 John 5:14" },
+                { text: "When anxiety was great within me, your consolation brought me joy.", reference: "Psalm 94:19" },
+                { text: "For hope that is seen is no hope at all. Who hopes for what they already have? But if we hope for what we do not yet have, we wait for it patiently.", reference: "Romans 8:24-25" },
+                { text: "There is surely a future hope for you, and your hope will not be cut off.", reference: "Proverbs 23:18" },
+                { text: "And without faith it is impossible to please God, because anyone who comes to him must believe that he exists and that he rewards those who earnestly seek him.", reference: "Hebrews 11:6" },
+                { text: "Though you have not seen him, you love him; and even though you do not see him now, you believe in him and are filled with an inexpressible and glorious joy, for you are receiving the end result of your faith, the salvation of your souls.", reference: "1 Peter 1:8-9" },
+                { text: "'If you can'?' said Jesus. 'Everything is possible for one who believes.'", reference: "Mark 9:23" },
+                { text: "May your unfailing love be with us, Lord, even as we put our hope in you.", reference: "Psalm 33:22" },
+                { text: "But we who live by the Spirit eagerly wait to receive by faith the righteousness God has promised to us.", reference: "Galatians 5:5 (NLT)" }, // NLT often clearer for this verse's meaning
+                { text: "in the hope of eternal life, which God, who does not lie, promised before the beginning of time,", reference: "Titus 1:2" },
+                { text: "For you have been my hope, Sovereign Lord, my confidence since my youth.", reference: "Psalm 71:5" },
+                { text: "To them God has chosen to make known among the Gentiles the glorious riches of this mystery, which is Christ in you, the hope of glory.", reference: "Colossians 1:27" },
+                { text: "Yes, my soul, find rest in God; my hope comes from him.", reference: "Psalm 62:5" },
+                { text: "For this reason we labor and strive, because we have put our hope in the living God, who is the Savior of all people, and especially of those who believe.", reference: "1 Timothy 4:10" }
+
+            ];
+
+
+            // --- Background Images ---
+            const backgroundImages = [
+                'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1487110977839-a1a1e439a70c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80', 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80', 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1746&q=80', 'https://images.unsplash.com/photo-1494500764479-0c8f2919a3d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80', 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1748&q=80'
+            ];
+
+            // --- Get HTML Elements ---
+            const verseDisplayElement = document.getElementById('verseDisplay');
+            const verseTextElement = document.getElementById('verseText');
+            const verseRefElement = document.getElementById('verseReference');
+            const newVerseBtn = document.getElementById('newVerseBtn');
+            const prevVerseBtn = document.getElementById('prevVerseBtn');
+            const bodyElement = document.body;
+
+            // --- State Variables ---
+            let currentVerse = null;
+            let previousVerse = null;
+            let currentBgIndex = -1;
+            let isFading = false;
+
+             // --- Function to Update Verse Display ---
+             function updateVerseDisplay(verseObject) {
+                 if(verseObject) {
+                    verseTextElement.textContent = `"${verseObject.text}"`;
+                    verseRefElement.textContent = verseObject.reference;
+                 } else {
+                    verseTextElement.textContent = "No verse available.";
+                    verseRefElement.textContent = "";
+                 }
+                 currentVerse = verseObject;
+             }
+
+             // --- Function to Update Background ---
+             function updateBackground() {
+                if (backgroundImages.length === 0) return;
+                let newBgIndex;
+                do {
+                    newBgIndex = Math.floor(Math.random() * backgroundImages.length);
+                } while (newBgIndex === currentBgIndex && backgroundImages.length > 1);
+                currentBgIndex = newBgIndex;
+                const randomImageUrl = backgroundImages[currentBgIndex];
+                const img = new Image();
+                img.onload = () => { bodyElement.style.backgroundImage = `url('${randomImageUrl}')`; }
+                img.onerror = () => { console.error("Failed to load BG:", randomImageUrl); bodyElement.style.backgroundImage = 'none'; }
+                img.src = randomImageUrl;
+             }
+
+            // --- Function to Display a Verse with Fade ---
+            function displayVerseWithFade(verseToShow) {
+                if (isFading || !verseToShow) return;
+                isFading = true;
+                verseDisplayElement.classList.add('fade-out');
+                setTimeout(() => {
+                    updateVerseDisplay(verseToShow);
+                    verseDisplayElement.classList.remove('fade-out');
+                    isFading = false;
+                    prevVerseBtn.disabled = (previousVerse === null);
+                }, 400); // Match CSS transition speed
+            }
+
+            // --- Event Handler for "Next Verse" Button ---
+            function handleNextVerseClick() {
+                if (isFading || bibleVerses.length === 0) return;
+                if(currentVerse) { previousVerse = currentVerse; } // Store the current verse before getting a new one
+                let newVerse;
+                if (bibleVerses.length === 1 && currentVerse) {
+                    newVerse = currentVerse; // If only one verse, just show it again
+                } else {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * bibleVerses.length);
+                        newVerse = bibleVerses[randomIndex];
+                    } while (newVerse === currentVerse && bibleVerses.length > 1); // Ensure it's different if possible
+                }
+                displayVerseWithFade(newVerse);
+                updateBackground(); // Change background with the new verse
+            }
+
+            // --- Event Handler for "Previous Verse" Button ---
+            function handlePreviousVerseClick() {
+                if (isFading || !previousVerse) return; // Don't do anything if fading or no previous verse exists
+
+                // Swap current and previous, but keep track of the one that *was* previous
+                let verseToDisplay = previousVerse;
+                previousVerse = currentVerse; // The current one will become the previous one *after* display
+
+                displayVerseWithFade(verseToDisplay);
+                 // Background is not changed when going back
+            }
+
+            // --- Function to Set Initial Content ---
+             function setInitialContent() {
+                if (bibleVerses.length === 0) {
+                    updateVerseDisplay(null);
+                    prevVerseBtn.disabled = true;
+                    newVerseBtn.disabled = true; // Disable if no verses
+                    return;
+                }
+                const verseIndex = Math.floor(Math.random() * bibleVerses.length);
+                currentVerse = bibleVerses[verseIndex];
+                previousVerse = null; // No previous verse initially
+                updateVerseDisplay(currentVerse);
+                updateBackground();
+                prevVerseBtn.disabled = true; // Previous button starts disabled
+            }
+
+            // --- Add Event Listeners ---
+            if (newVerseBtn) { newVerseBtn.addEventListener('click', handleNextVerseClick); }
+            else { console.error("Button 'newVerseBtn' not found."); }
+            if (prevVerseBtn) { prevVerseBtn.addEventListener('click', handlePreviousVerseClick); }
+            else { console.error("Button 'prevVerseBtn' not found."); }
+
+            // --- Initial Setup ---
+            setInitialContent();
+
+        }); // End of DOMContentLoaded listener
+    </script>
+
+</body>
+</html>
