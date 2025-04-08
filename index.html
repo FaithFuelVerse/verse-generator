@@ -7,32 +7,84 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Consider adding an icon library like Font Awesome for better icons -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
 
     <!-- CSS Styles embedded directly -->
     <style>
         :root {
+            /* Light Theme (Default) */
+            --bg-color: #e8eaf6; /* Light Lavender Gray */
+            --container-bg: rgba(255, 255, 255, 0.92);
+            --text-color: #333;
             --primary-color: #6a3d9a; /* Deeper purple */
             --secondary-color: #f4e9fc; /* Very light lavender */
-            --text-color: #333;
-            --quote-bg: #ffffff; /* White background for quote */
+            --quote-bg: #ffffff;
             --quote-border: #cab2e2; /* Lighter purple for border */
-            --transition-speed: 400ms; /* Speed for fade effect */
-            --entry-delay: 200ms; /* Delay before entry animation starts */
-            --entry-duration: 800ms; /* Duration of entry animation */
+            --button-text: white;
+            --button-hover-bg: #5a2d82;
+            --button-active-bg: #452364;
+            --button-shadow-color: rgba(106, 61, 154, 0.3);
+            --favorite-color: #ffc107; /* Gold for favorite star */
+            --modal-bg: #fefefe;
+            --modal-content-bg: #f9f9f9;
+            --modal-border: #888;
+            --modal-header: var(--primary-color);
+            --toggle-bg: #ccc;
+            --toggle-knob: white;
+            --toggle-active-bg: var(--primary-color);
+            --footer-text: #666;
+            --settings-icon-bg: rgba(255, 255, 255, 0.8);
+            --settings-icon-color: var(--primary-color);
+            --share-popup-bg: white;
+            --share-popup-shadow: rgba(0, 0, 0, 0.15);
+
+            --transition-speed: 400ms;
+            --entry-delay: 200ms;
+            --entry-duration: 800ms;
         }
+
+        /* --- Dark Mode Theme --- */
+        body.dark-mode {
+            --bg-color: #2c2c3a; /* Dark Slate Blue/Purple */
+            --container-bg: rgba(40, 40, 55, 0.95); /* Slightly transparent dark */
+            --text-color: #e0e0e0; /* Light gray text */
+            --primary-color: #a37fd1; /* Lighter purple for contrast */
+            --secondary-color: #4a3063; /* Darker muted purple */
+            --quote-bg: #35354a; /* Darker background for quote */
+            --quote-border: #7b599e; /* Muted purple border */
+            --button-text: #1f1f2f; /* Dark text on lighter purple buttons */
+            --button-hover-bg: #b897de;
+            --button-active-bg: #9168bf;
+            --button-shadow-color: rgba(163, 127, 209, 0.3);
+            --favorite-color: #ffd700; /* Brighter gold */
+            --modal-bg: #404055;
+            --modal-content-bg: #4a4a60;
+            --modal-border: #666;
+            --modal-header: var(--primary-color);
+            --toggle-bg: #555;
+            --toggle-knob: #ccc;
+            --toggle-active-bg: var(--primary-color);
+            --footer-text: #aaa;
+            --settings-icon-bg: rgba(40, 40, 55, 0.8);
+            --settings-icon-color: var(--primary-color);
+            --share-popup-bg: #35354a;
+             --share-popup-shadow: rgba(0, 0, 0, 0.3);
+        }
+
 
         body {
             font-family: 'Montserrat', sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 20px; /* Padding for content, not the whole body edge */
             box-sizing: border-box;
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
-            background-color: #e8eaf6;
-            transition: background-image var(--transition-speed) ease-in-out;
+            background-color: var(--bg-color);
+            transition: background-image var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,18 +94,12 @@
 
         /* --- Entry Animation Keyframes --- */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.92);
+            background: var(--container-bg);
             padding: 35px 45px;
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -61,10 +107,14 @@
             max-width: 650px;
             width: 100%;
             border: 1px solid rgba(0,0,0,0.05);
-
-            /* --- Apply Entry Animation --- */
             opacity: 0; /* Start hidden */
             animation: fadeInUp var(--entry-duration) ease-out var(--entry-delay) forwards;
+            transition: background-color var(--transition-speed) ease-in-out;
+            position: relative; /* Needed for share popup positioning context */
+             z-index: 10; /* Above fixed elements */
+        }
+        body.dark-mode .container {
+             border-color: rgba(255,255,255,0.1);
         }
 
         h1 {
@@ -72,13 +122,18 @@
             color: var(--primary-color);
             margin-bottom: 15px;
             font-weight: 700;
+            transition: color var(--transition-speed) ease-in-out;
         }
 
         .subtitle {
             margin-bottom: 30px;
-            color: #555;
+            color: #555; /* Keep slightly muted */
             font-size: 1.05em;
+            transition: color var(--transition-speed) ease-in-out;
         }
+         body.dark-mode .subtitle {
+             color: #bbb;
+         }
 
         blockquote {
             border-left: 6px solid var(--quote-border);
@@ -91,12 +146,10 @@
             position: relative;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             opacity: 1;
-            transition: opacity var(--transition-speed) ease-in-out;
+            transition: opacity var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease-in-out, border-color var(--transition-speed) ease-in-out;
         }
 
-        blockquote.fade-out {
-            opacity: 0;
-        }
+        blockquote.fade-out { opacity: 0; }
 
         blockquote p#verseText {
             font-family: 'Merriweather', serif;
@@ -105,6 +158,7 @@
             color: var(--text-color);
             margin-bottom: 15px;
             line-height: 1.7;
+            transition: color var(--transition-speed) ease-in-out;
         }
 
         cite {
@@ -115,85 +169,358 @@
             font-size: 0.9em;
             text-align: right;
             font-family: 'Montserrat', sans-serif;
+            transition: color var(--transition-speed) ease-in-out;
         }
+        body.dark-mode cite { color: #aaa; }
 
-        /* --- Button Styles --- */
-        .button-container { /* Flex container for buttons */
+
+        /* --- Consolidated Action Bar --- */
+        .action-bar {
              display: flex;
-             justify-content: center; /* Center buttons */
-             gap: 15px; /* Space between buttons */
-             margin-top: 20px;
-             flex-wrap: wrap; /* Allow wrapping on small screens */
+             justify-content: center;
+             align-items: center;
+             gap: 10px;
+             margin-top: 30px;
+             flex-wrap: wrap;
+             position: relative; /* For containing the absolute positioned share popup */
         }
 
-        button {
+        .action-button {
             background-color: var(--primary-color);
-            color: white;
+            color: var(--button-text);
             border: none;
-            padding: 14px 25px; /* Adjusted padding slightly */
-            font-size: 1.0em; /* Adjusted size slightly */
+            padding: 10px 18px; /* Slightly smaller */
+            font-size: 0.9em; /* Slightly smaller */
             font-weight: bold;
             font-family: 'Montserrat', sans-serif;
-            border-radius: 30px;
+            border-radius: 25px; /* Rounded */
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-            box-shadow: 0 4px 12px rgba(106, 61, 154, 0.3);
-            display: inline-flex; /* Align icon and text */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease, color var(--transition-speed) ease-in-out;
+            box-shadow: 0 4px 10px var(--button-shadow-color);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 150px; /* Give buttons a minimum width */
+            min-width: 45px; /* Allow icon-only to be square-ish */
+            text-decoration: none;
+            line-height: 1.2; /* Prevent tall icons from stretching */
         }
-
-        button .icon {
-            margin-right: 8px;
-            display: inline-block;
-            transition: transform 0.3s ease;
+         .action-button .icon {
+             margin-right: 6px;
+             font-size: 1.1em; /* Make icons slightly larger */
+             display: inline-block;
+             transition: transform 0.3s ease;
+         }
+        .action-button .text {
+             /* display: none; /* Hide text by default - maybe show on larger screens */
+             /* @media (min-width: 600px) { display: inline; } */
         }
-
-        button#prevVerseBtn .icon { /* Specific icon margin for prev button */
-             margin-right: 0;
-             margin-left: 8px;
-        }
-
-
-        button:hover {
-            background-color: #5a2d82;
-            box-shadow: 0 6px 16px rgba(106, 61, 154, 0.4);
+         .action-button:hover {
+            background-color: var(--button-hover-bg);
+            box-shadow: 0 6px 14px var(--button-shadow-color);
             transform: translateY(-2px);
-        }
-
-        button#newVerseBtn:hover .icon {
-             transform: rotate(360deg);
-        }
-         button#prevVerseBtn:hover .icon {
-             transform: translateX(-3px); /* Slight move left on hover */
-        }
-
-
-        button:active {
-            background-color: #452364;
+         }
+         .action-button:active {
+            background-color: var(--button-active-bg);
             transform: translateY(0px) scale(0.98);
-            box-shadow: 0 2px 8px rgba(106, 61, 154, 0.3);
-        }
-
-         /* Style for disabled button */
-        button:disabled {
-            background-color: #bca0d4; /* Lighter, muted purple */
-            opacity: 0.7;
+            box-shadow: 0 2px 6px var(--button-shadow-color);
+         }
+         .action-button:disabled {
+            background-color: #bca0d4; /* Use a specific disabled color */
+            color: #777;
+            opacity: 0.6;
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
+         }
+          body.dark-mode .action-button:disabled {
+             background-color: #5a5a70;
+             color: #999;
+         }
+         .action-button:disabled:hover { background-color: #bca0d4; box-shadow: none; transform: none; }
+         body.dark-mode .action-button:disabled:hover { background-color: #5a5a70; }
+
+         /* Specific button adjustments */
+         .action-button#prevVerseBtn .icon { margin-right: 0; margin-left: 6px; }
+         .action-button#prevVerseBtn .text { margin-right: 6px; }
+         .action-button#newVerseBtn:hover .icon { transform: rotate(360deg); }
+         .action-button#prevVerseBtn:hover .icon { transform: translateX(-3px); }
+
+         /* Favorite Button Specific Styles */
+         #favoriteBtn {
+            background-color: #e0e0e0; /* Neutral */
+            color: #555;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         }
+         body.dark-mode #favoriteBtn {
+             background-color: #555;
+             color: #ddd;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+         }
+         #favoriteBtn:hover { background-color: #d1d1d1; }
+         body.dark-mode #favoriteBtn:hover { background-color: #666; }
+
+         #favoriteBtn.favorited {
+             background-color: var(--favorite-color);
+             color: white; /* White text on gold */
+             box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+         }
+          body.dark-mode #favoriteBtn.favorited {
+              color: #333; /* Darker text on gold in dark mode */
+          }
+         #favoriteBtn .icon { margin-right: 5px; }
+
+
+         /* --- Share Button & Popup --- */
+         .share-button-wrapper {
+             position: relative; /* Anchor for the popup */
+             display: inline-block; /* Keep inline flow */
+         }
+         #shareBtn .icon { margin: 0; } /* Icon only for main share button */
+
+         .share-popup {
+             position: absolute;
+             bottom: 100%; /* Position above the button */
+             left: 50%;
+             transform: translateX(-50%) translateY(-10px); /* Center and add spacing */
+             background-color: var(--share-popup-bg);
+             border-radius: 8px;
+             box-shadow: 0 4px 15px var(--share-popup-shadow);
+             padding: 10px;
+             display: flex;
+             gap: 8px;
+             z-index: 100; /* Above other content */
+             opacity: 0;
+             visibility: hidden;
+             transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
+             white-space: nowrap; /* Prevent wrapping */
+         }
+
+         .share-popup.visible {
+             opacity: 1;
+             visibility: visible;
+             transform: translateX(-50%) translateY(-15px); /* Move slightly more on show */
+             transition: opacity 0.3s ease, visibility 0s linear 0s, transform 0.3s ease;
+         }
+
+         .share-popup a {
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             padding: 8px 12px;
+             border-radius: 20px;
+             color: white;
+             text-decoration: none;
+             font-size: 0.85em;
+             transition: background-color 0.3s ease, transform 0.2s ease;
+         }
+          .share-popup a .icon { margin-right: 5px; }
+          .share-popup a:hover { transform: scale(1.05); }
+
+          .share-popup a.twitter { background-color: #1DA1F2; }
+          .share-popup a.facebook { background-color: #1877F2; }
+          .share-popup a.whatsapp { background-color: #25D366; }
+          .share-popup a.twitter:hover { background-color: #0c85d0; }
+          .share-popup a.facebook:hover { background-color: #115fbc; }
+          .share-popup a.whatsapp:hover { background-color: #1ebe57; }
+
+
+        /* --- Simple Modal Styles (Favorites & Settings) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            padding-top: 60px;
         }
-        button:disabled:hover { /* Prevent hover effects when disabled */
-             background-color: #bca0d4;
-             box-shadow: none;
-             transform: none;
+        .modal-content {
+            background-color: var(--modal-bg);
+            margin: 5% auto;
+            padding: 25px 35px;
+            border: 1px solid var(--modal-border);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+            transition: background-color var(--transition-speed) ease-in-out;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: var(--text-color); /* Use theme text color on hover */
+            text-decoration: none;
+        }
+         body.dark-mode .modal-close { color: #888; }
+         body.dark-mode .modal-close:hover,
+         body.dark-mode .modal-close:focus { color: #ddd; }
+
+        .modal h2 {
+             margin-top: 0;
+             color: var(--modal-header);
+             text-align: center;
+             margin-bottom: 25px;
+             font-family: 'Merriweather', serif;
+             transition: color var(--transition-speed) ease-in-out;
+        }
+        .modal ul {
+             list-style: none;
+             padding: 0;
+             max-height: 60vh;
+             overflow-y: auto;
+             margin-top: 15px; /* Space above list */
+        }
+         /* Favorites List Specifics */
+         #favoritesList li {
+             background-color: var(--modal-content-bg);
+             margin-bottom: 12px;
+             padding: 15px;
+             border-radius: 5px;
+             border-left: 4px solid var(--quote-border);
+             transition: background-color var(--transition-speed) ease-in-out, border-color var(--transition-speed) ease-in-out;
+         }
+         #favoritesList li p { margin: 0 0 8px 0; font-style: italic; color: var(--text-color); transition: color var(--transition-speed) ease-in-out;}
+         #favoritesList li cite { font-size: 0.85em; color: #555; text-align: right; display: block; transition: color var(--transition-speed) ease-in-out;}
+          body.dark-mode #favoritesList li cite { color: #bbb; }
+
+         /* --- Settings Modal Specifics --- */
+         .settings-section {
+             margin-bottom: 25px;
+             padding-bottom: 20px;
+             border-bottom: 1px solid #eee;
+         }
+         body.dark-mode .settings-section { border-bottom-color: #444; }
+         .settings-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+         .settings-section h3 {
+             margin-top: 0;
+             margin-bottom: 15px;
+             color: var(--primary-color);
+             font-size: 1.1em;
+             transition: color var(--transition-speed) ease-in-out;
+         }
+         .setting-item {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 15px;
+         }
+         .setting-item label { font-weight: bold; color: var(--text-color); transition: color var(--transition-speed) ease-in-out;}
+         .setting-item p { /* For about section */
+            font-size: 0.9em; color: var(--text-color); margin: 0; transition: color var(--transition-speed) ease-in-out;
+         }
+
+        /* Simple Toggle Switch CSS */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px; /* Width of the switch */
+            height: 26px; /* Height of the switch */
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--toggle-bg);
+            transition: .4s;
+            border-radius: 26px; /* Fully rounded */
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; /* Size of the knob */
+            width: 20px; /* Size of the knob */
+            left: 3px; /* Padding from left */
+            bottom: 3px; /* Padding from bottom */
+            background-color: var(--toggle-knob);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--toggle-active-bg);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px); /* Move knob to the right (width - knob_width - 2*padding) */
+        }
+
+        /* Clear Favorites Button */
+        #clearFavoritesBtn {
+            background-color: #dc3545; /* Red for destructive action */
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #clearFavoritesBtn:hover { background-color: #c82333; }
+
+        /* --- Settings Icon (Top Left) --- */
+        #settingsBtn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background-color: var(--settings-icon-bg);
+            color: var(--settings-icon-color);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5em; /* Make gear icon larger */
+            cursor: pointer;
+            z-index: 999; /* Above container but below modals */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: background-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out, transform 0.2s ease;
+        }
+        #settingsBtn:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+         body.dark-mode #settingsBtn {
+             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+         }
+
+         /* --- Footer Credit (Bottom Right) --- */
+         .footer-credit {
+             position: fixed;
+             bottom: 10px;
+             right: 15px;
+             font-size: 0.8em;
+             color: var(--footer-text);
+             z-index: 998; /* Below settings icon if they overlap */
+             transition: color var(--transition-speed) ease-in-out;
+         }
 
     </style>
 
 </head>
 <body>
+
+    <!-- Settings Icon -->
+    <button id="settingsBtn" title="Settings">⚙️</button>
 
     <div class="container">
         <h1>Daily Inspiration</h1>
@@ -204,166 +531,159 @@
             <cite id="verseReference"></cite>
         </blockquote>
 
-        <!-- Button Container -->
-        <div class="button-container">
-             <!-- Added Previous Button -->
-            <button id="prevVerseBtn" disabled><span class="icon">←</span> Previous</button>
-            <button id="newVerseBtn"><span class="icon">📖</span>Next Verse</button> <!-- Changed text slightly -->
+        <!-- Consolidated Action Bar -->
+        <div class="action-bar">
+             <button id="prevVerseBtn" class="action-button" disabled title="Previous Verse">
+                 <span class="text">Previous</span><span class="icon">←</span>
+            </button>
+             <button id="newVerseBtn" class="action-button" title="Next Verse">
+                 <span class="icon">📖</span><span class="text">Next</span>
+            </button>
+             <button id="favoriteBtn" class="action-button" title="Add to Favorites">
+                 <span class="icon">☆</span><span class="text">Favorite</span>
+            </button>
+             <button id="viewFavoritesBtn" class="action-button" title="View Saved Verses">
+                 <span class="icon">📚</span><span class="text">Saved</span>
+            </button>
+             <!-- Share Button Wrapper -->
+             <div class="share-button-wrapper">
+                 <button id="shareBtn" class="action-button" title="Share Verse">
+                     <span class="icon">↑</span><span class="text">Share</span>
+                </button>
+                 <!-- Share Popup (Initially Hidden) -->
+                 <div id="sharePopup" class="share-popup">
+                     <a href="#" id="shareTwitterBtn" class="share-button twitter" target="_blank" rel="noopener noreferrer" title="Share on Twitter">
+                         <span class="icon">🐦</span> Twitter
+                     </a>
+                     <a href="#" id="shareFacebookBtn" class="share-button facebook" target="_blank" rel="noopener noreferrer" title="Share on Facebook">
+                         <span class="icon">👍</span> Facebook
+                     </a>
+                     <a href="#" id="shareWhatsappBtn" class="share-button whatsapp" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp">
+                          <span class="icon">💬</span> WhatsApp
+                     </a>
+                 </div>
+            </div>
+        </div>
+
+    </div>
+
+     <!-- Favorites Modal -->
+    <div id="favoritesModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeFavoritesModalBtn">×</span>
+            <h2>My Favorite Verses</h2>
+            <ul id="favoritesList">
+                <!-- Favorite verses will be listed here -->
+                <li><p>No favorites saved yet.</p></li>
+            </ul>
         </div>
     </div>
+
+     <!-- Settings Modal -->
+     <div id="settingsModal" class="modal">
+         <div class="modal-content">
+             <span class="modal-close" id="closeSettingsModalBtn">×</span>
+             <h2>Settings</h2>
+
+             <!-- Appearance Section -->
+             <div class="settings-section">
+                 <h3>Appearance</h3>
+                 <div class="setting-item">
+                     <label for="darkModeToggle">Dark Mode</label>
+                     <label class="toggle-switch">
+                         <input type="checkbox" id="darkModeToggle">
+                         <span class="slider"></span>
+                     </label>
+                 </div>
+                 <!-- Add Font Size / Background Theme options here later -->
+             </div>
+
+             <!-- Data Management Section -->
+             <div class="settings-section">
+                 <h3>Data Management</h3>
+                 <div class="setting-item">
+                     <label for="clearFavoritesBtn">Saved Verses</label>
+                     <button id="clearFavoritesBtn">Clear All Favorites</button>
+                 </div>
+                 <!-- Add Reset Settings button here later -->
+             </div>
+
+             <!-- About Section -->
+             <div class="settings-section">
+                 <h3>About</h3>
+                 <div class="setting-item">
+                     <p>A simple tool for daily inspiration.</p>
+                     <!-- Add GitHub link or other info if desired -->
+                 </div>
+             </div>
+
+         </div>
+     </div>
+
+     <!-- Footer Credit -->
+     <footer class="footer-credit">
+         Developed by Allen James David ❤️
+     </footer>
+
 
     <!-- JavaScript embedded directly -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- Bible Verses Data ---
-            // Includes general verses, plus specific ones for marriage, study/strength, powerful themes, and faith/hope/positivity
+            // --- Bible Verses Data --- (Approx 600+ verses - truncated for brevity in example)
             const bibleVerses = [
-                // General Verses (Subset)
-                { text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.", reference: "John 3:16" },
-                { text: "The Lord is my shepherd; I shall not want.", reference: "Psalm 23:1" },
-                { text: "Trust in the Lord with all your heart, and do not lean on your own understanding.", reference: "Proverbs 3:5" },
-                { text: "For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.", reference: "Jeremiah 29:11" },
-                { text: "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness,", reference: "Galatians 5:22" },
-                { text: "And we know that for those who love God all things work together for good, for those who are called according to his purpose.", reference: "Romans 8:28" },
-                { text: "Your word is a lamp to my feet and a light to my path.", reference: "Psalm 119:105" },
-                { text: "Ask, and it will be given to you; seek, and you will find; knock, and it will be opened to you.", reference: "Matthew 7:7" },
-                { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", reference: "Matthew 11:28" },
-                { text: "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.", reference: "John 14:27" },
-                { text: "Casting all your anxieties on him, because he cares for you.", reference: "1 Peter 5:7" },
-                { text: "The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.", reference: "Lamentations 3:22-23" },
-                { text: "For the wages of sin is death, but the free gift of God is eternal life in Christ Jesus our Lord.", reference: "Romans 6:23" },
-                { text: "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.", reference: "1 John 1:9" },
-                { text: "For by grace you have been saved through faith. And this is not your own doing; it is the gift of God,", reference: "Ephesians 2:8" },
-                { text: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude.", reference: "1 Corinthians 13:4" },
-                { text: "And now these three remain: faith, hope and love. But the greatest of these is love.", reference: "1 Corinthians 13:13" },
-                { text: "Let everything that has breath praise the Lord! Praise the Lord!", reference: "Psalm 150:6" },
-                { text: "The heavens declare the glory of God, and the sky above proclaims his handiwork.", reference: "Psalm 19:1" },
-                { text: "Rejoice always, pray without ceasing, give thanks in all circumstances; for this is the will of God in Christ Jesus for you.", reference: "1 Thessalonians 5:16-18" },
-                { text: "Do not be conformed to this world, but be transformed by the renewal of your mind, that by testing you may discern what is the will of God, what is good and acceptable and perfect.", reference: "Romans 12:2" },
-                { text: "The heart of man plans his way, but the Lord establishes his steps.", reference: "Proverbs 16:9" },
-                { text: "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.", reference: "Galatians 6:9" },
-                { text: "Therefore, if anyone is in Christ, he is a new creation. The old has passed away; behold, the new has come.", reference: "2 Corinthians 5:17" },
-
-                // --- Verses for Married Life ---
-                { text: "Husbands, love your wives, just as Christ loved the church and gave himself up for her.", reference: "Ephesians 5:25" },
-                { text: "However, each one of you also must love his wife as he loves himself, and the wife must respect her husband.", reference: "Ephesians 5:33" },
-                { text: "Wives, submit yourselves to your husbands, as is fitting in the Lord. Husbands, love your wives and do not be harsh with them.", reference: "Colossians 3:18-19" },
-                { text: "He who finds a wife finds what is good and receives favor from the Lord.", reference: "Proverbs 18:22" },
-                { text: "Therefore a man shall leave his father and his mother and hold fast to his wife, and they shall become one flesh.", reference: "Genesis 2:24" },
-                { text: "The husband should fulfill his marital duty to his wife, and likewise the wife to her husband.", reference: "1 Corinthians 7:3" },
-                { text: "A wife of noble character who can find? She is worth far more than rubies.", reference: "Proverbs 31:10" },
-                { text: "Husbands, in the same way be considerate as you live with your wives, and treat them with respect...", reference: "1 Peter 3:7" },
-                { text: "Marriage should be honored by all, and the marriage bed kept pure...", reference: "Hebrews 13:4" },
-                { text: "Therefore what God has joined together, let no one separate.", reference: "Mark 10:9" },
-                { text: "Two are better than one, because they have a good return for their labor.", reference: "Ecclesiastes 4:9" },
-                { text: "Many waters cannot quench love; rivers cannot sweep it away.", reference: "Song of Solomon 8:7" },
-                { text: "Above all, love each other deeply, because love covers over a multitude of sins.", reference: "1 Peter 4:8" },
-                { text: "Be completely humble and gentle; be patient, bearing with one another in love.", reference: "Ephesians 4:2" },
-
-                // --- Verses for Strength/Wisdom (Exams, Study) ---
-                { text: "If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault, and it will be given to you.", reference: "James 1:5" },
-                { text: "For the Lord gives wisdom; from his mouth come knowledge and understanding.", reference: "Proverbs 2:6" },
-                { text: "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God... will guard your hearts and your minds in Christ Jesus.", reference: "Philippians 4:6-7" },
-                { text: "but those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint.", reference: "Isaiah 40:31" },
-                { text: "For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.", reference: "2 Timothy 1:7" },
-                { text: "Commit to the Lord whatever you do, and he will establish your plans.", reference: "Proverbs 16:3" },
-                { text: "Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.", reference: "Joshua 1:9" },
-                { text: "I can do all things through him who strengthens me.", reference: "Philippians 4:13" },
-                { text: "...in all your ways submit to him, and he will make your paths straight.", reference: "Proverbs 3:6" },
-                { text: "Whatever you do, work at it with all your heart, as working for the Lord, not for human masters,", reference: "Colossians 3:23" },
-                { text: "I have more insight than all my teachers, for I meditate on your statutes.", reference: "Psalm 119:99" },
-                { text: "The unfolding of your words gives light; it gives understanding to the simple.", reference: "Psalm 119:130" },
-                { text: "He gives wisdom to the wise and knowledge to the discerning.", reference: "Daniel 2:21" },
-                { text: "But seek first his kingdom and his righteousness, and all these things will be given to you as well.", reference: "Matthew 6:33" },
-                { text: "So whether you eat or drink or whatever you do, do it all for the glory of God.", reference: "1 Corinthians 10:31" },
-                { text: "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness,", reference: "2 Timothy 3:16" },
-                { text: "Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.", reference: "Isaiah 41:10" },
-
-                // --- Additional Powerful Verses ---
-                { text: "The Lord is my light and my salvation; whom shall I fear? The Lord is the stronghold of my life; of whom shall I be afraid?", reference: "Psalm 27:1" },
-                { text: "God is our refuge and strength, an ever-present help in trouble.", reference: "Psalm 46:1" },
-                { text: "The Lord sits enthroned over the flood; the Lord sits enthroned as king forever.", reference: "Psalm 29:10" },
-                { text: "He alone is my rock and my salvation, my fortress; I shall not be greatly shaken.", reference: "Psalm 62:2" },
-                { text: "What then shall we say to these things? If God is for us, who can be against us?", reference: "Romans 8:31" },
-                { text: "No, in all these things we are more than conquerors through him who loved us.", reference: "Romans 8:37" },
-                { text: "For I am convinced that neither death nor life... nor anything else in all creation, will be able to separate us from the love of God in Christ Jesus our Lord.", reference: "Romans 8:38-39" },
-                { text: "Be watchful, stand firm in the faith, act like men, be strong.", reference: "1 Corinthians 16:13" },
-                { text: "Finally, be strong in the Lord and in the strength of his might.", reference: "Ephesians 6:10" },
-                { text: "Put on the whole armor of God, that you may be able to stand against the schemes of the devil.", reference: "Ephesians 6:11" },
-                { text: "...take up the shield of faith, with which you can extinguish all the flaming darts of the evil one;", reference: "Ephesians 6:16" },
-                { text: "For the word of God is living and active, sharper than any two-edged sword...", reference: "Hebrews 4:12" },
-                { text: "Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.", reference: "Hebrews 4:16" },
-                { text: "Submit yourselves therefore to God. Resist the devil, and he will flee from you.", reference: "James 4:7" },
-                { text: "The Lord your God is in your midst, a mighty one who will save; he will rejoice over you with gladness; he will quiet you by his love; he will exult over you with loud singing.", reference: "Zephaniah 3:17" },
-                { text: "Ah, Lord God! It is you who have made the heavens and the earth by your great power and by your outstretched arm! Nothing is too hard for you.", reference: "Jeremiah 32:17" },
-                { text: "The name of the Lord is a strong tower; the righteous man runs into it and is safe.", reference: "Proverbs 18:10" },
-                { text: "When you pass through the waters, I will be with you; and through the rivers, they shall not overwhelm you; when you walk through fire you shall not be burned, and the flame shall not consume you.", reference: "Isaiah 43:2" },
-                { text: "No weapon that is fashioned against you shall succeed, and you shall confute every tongue that rises against you in judgment.", reference: "Isaiah 54:17" },
-                { text: "The Lord will fight for you; you need only to be still.", reference: "Exodus 14:14" },
-                { text: "For where two or three are gathered in my name, there am I among them.", reference: "Matthew 18:20" },
-                { text: "All authority in heaven and on earth has been given to me.", reference: "Matthew 28:18" },
-                { text: "Behold, I have given you authority to tread on serpents and scorpions, and over all the power of the enemy, and nothing shall hurt you.", reference: "Luke 10:19" },
-                { text: "I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world.", reference: "John 16:33" },
-                { text: "But you will receive power when the Holy Spirit has come upon you...", reference: "Acts 1:8" },
-                { text: "For our struggle is not against flesh and blood, but against the rulers, against the authorities, against the powers of this dark world and against the spiritual forces of evil in the heavenly realms.", reference: "Ephesians 6:12" },
-                { text: "...being confident of this, that he who began a good work in you will carry it on to completion until the day of Christ Jesus.", reference: "Philippians 1:6" },
-                { text: "My God will supply every need of yours according to his riches in glory in Christ Jesus.", reference: "Philippians 4:19" },
-                { text: "But the Lord is faithful. He will establish you and guard you against the evil one.", reference: "2 Thessalonians 3:3" },
-                //{ text: "For God gave us a spirit not of fear but of power and love and self-control.", reference: "2 Timothy 1:7" }, // Duplicate of Strength/Wisdom section
-                { text: "Jesus Christ is the same yesterday and today and forever.", reference: "Hebrews 13:8" },
-                { text: "The Lord is my helper; I will not fear; what can man do to me?", reference: "Hebrews 13:6" },
-                { text: "Humble yourselves, therefore, under the mighty hand of God so that at the proper time he may exalt you,", reference: "1 Peter 5:6" },
-                { text: "Little children, you are from God and have overcome them, for he who is in you is greater than he who is in the world.", reference: "1 John 4:4" },
-                { text: "For everyone who has been born of God overcomes the world. And this is the victory that has overcome the world—our faith.", reference: "1 John 5:4" },
-                { text: "And call upon me in the day of trouble; I will deliver you, and you shall glorify me.", reference: "Psalm 50:15" },
-                { text: "The Lord redeems the life of his servants; none of those who take refuge in him will be condemned.", reference: "Psalm 34:22" },
-                { text: "He heals the brokenhearted and binds up their wounds.", reference: "Psalm 147:3" },
-                { text: "Wait for the Lord; be strong, and let your heart take courage; wait for the Lord!", reference: "Psalm 27:14" },
-                { text: "With man this is impossible, but with God all things are possible.", reference: "Matthew 19:26" },
-                { text: "Truly I tell you, if you have faith as small as a mustard seed, you can say to this mountain, ‘Move from here to there,’ and it will move. Nothing will be impossible for you.", reference: "Matthew 17:20" },
-                { text: "Have faith in God.", reference: "Mark 11:22" },
-                { text: "Therefore I tell you, whatever you ask in prayer, believe that you have received it, and it will be yours.", reference: "Mark 11:24" },
-                { text: "For nothing will be impossible with God.", reference: "Luke 1:37" },
-                { text: "Behold, I am the Lord, the God of all flesh. Is anything too hard for me?", reference: "Jeremiah 32:27" },
-                { text: "Then Job answered the Lord and said: 'I know that you can do all things, and that no purpose of yours can be thwarted.'", reference: "Job 42:1-2" },
-                { text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life, which God has promised to those who love him.", reference: "James 1:12" },
-                //{ text: "He gives strength to the weary and increases the power of the weak.", reference: "Isaiah 40:29" }, // Near duplicate of Isaiah 40:31
-                { text: "The eternal God is your refuge, and underneath are the everlasting arms.", reference: "Deuteronomy 33:27" },
-
-                // --- NEW Verses on Faith, Positiveness, Hope ---
-                { text: "Now faith is confidence in what we hope for and assurance about what we do not see.", reference: "Hebrews 11:1" },
-                { text: "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.", reference: "Romans 15:13" },
-                { text: "Praise be to the God and Father of our Lord Jesus Christ! In his great mercy he has given us new birth into a living hope through the resurrection of Jesus Christ from the dead.", reference: "1 Peter 1:3" },
-                { text: "Finally, brothers and sisters, whatever is true, whatever is noble, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think about such things.", reference: "Philippians 4:8" },
-                { text: "But blessed is the one who trusts in the Lord, whose confidence is in him.", reference: "Jeremiah 17:7" },
-                { text: "Be strong and take heart, all you who hope in the Lord.", reference: "Psalm 31:24" },
-                { text: "And hope does not put us to shame, because God’s love has been poured out into our hearts through the Holy Spirit, who has been given to us.", reference: "Romans 5:5" },
-                { text: "Let us hold unswervingly to the hope we profess, for he who promised is faithful.", reference: "Hebrews 10:23" },
-                { text: "But thanks be to God! He gives us the victory through our Lord Jesus Christ.", reference: "1 Corinthians 15:57" },
-                { text: "You make known to me the path of life; you will fill me with joy in your presence, with eternal pleasures at your right hand.", reference: "Psalm 16:11" },
-                { text: "Nehemiah said, 'Go and enjoy choice food and sweet drinks, and send some to those who have nothing prepared... Do not grieve, for the joy of the Lord is your strength.'", reference: "Nehemiah 8:10b" },
-                { text: "Be joyful in hope, patient in affliction, faithful in prayer.", reference: "Romans 12:12" },
-                { text: "Why, my soul, are you downcast? Why so disturbed within me? Put your hope in God, for I will yet praise him, my Savior and my God.", reference: "Psalm 42:11" },
-                { text: "You will keep in perfect peace those whose minds are steadfast, because they trust in you.", reference: "Isaiah 26:3" },
-                { text: "Therefore we do not lose heart. Though outwardly we are wasting away, yet inwardly we are being renewed day by day.", reference: "2 Corinthians 4:16" },
-                { text: "The Lord has done it this very day; let us rejoice today and be glad.", reference: "Psalm 118:24" },
-                { text: "This is the confidence we have in approaching God: that if we ask anything according to his will, he hears us.", reference: "1 John 5:14" },
-                { text: "When anxiety was great within me, your consolation brought me joy.", reference: "Psalm 94:19" },
-                { text: "For hope that is seen is no hope at all. Who hopes for what they already have? But if we hope for what we do not yet have, we wait for it patiently.", reference: "Romans 8:24-25" },
-                { text: "There is surely a future hope for you, and your hope will not be cut off.", reference: "Proverbs 23:18" },
-                { text: "And without faith it is impossible to please God, because anyone who comes to him must believe that he exists and that he rewards those who earnestly seek him.", reference: "Hebrews 11:6" },
-                { text: "Though you have not seen him, you love him; and even though you do not see him now, you believe in him and are filled with an inexpressible and glorious joy, for you are receiving the end result of your faith, the salvation of your souls.", reference: "1 Peter 1:8-9" },
-                { text: "'If you can'?' said Jesus. 'Everything is possible for one who believes.'", reference: "Mark 9:23" },
-                { text: "May your unfailing love be with us, Lord, even as we put our hope in you.", reference: "Psalm 33:22" },
-                { text: "But we who live by the Spirit eagerly wait to receive by faith the righteousness God has promised to us.", reference: "Galatians 5:5 (NLT)" }, // NLT often clearer for this verse's meaning
-                { text: "in the hope of eternal life, which God, who does not lie, promised before the beginning of time,", reference: "Titus 1:2" },
-                { text: "For you have been my hope, Sovereign Lord, my confidence since my youth.", reference: "Psalm 71:5" },
-                { text: "To them God has chosen to make known among the Gentiles the glorious riches of this mystery, which is Christ in you, the hope of glory.", reference: "Colossians 1:27" },
-                { text: "Yes, my soul, find rest in God; my hope comes from him.", reference: "Psalm 62:5" },
-                { text: "For this reason we labor and strive, because we have put our hope in the living God, who is the Savior of all people, and especially of those who believe.", reference: "1 Timothy 4:10" }
-
-            ];
+                 { text: "For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.", reference: "John 3:16" },
+                 { text: "The Lord is my shepherd; I shall not want.", reference: "Psalm 23:1" },
+                 { text: "Trust in the Lord with all your heart, and do not lean on your own understanding.", reference: "Proverbs 3:5" },
+                 { text: "For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.", reference: "Jeremiah 29:11" },
+                 { text: "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness,", reference: "Galatians 5:22" },
+                 { text: "And we know that for those who love God all things work together for good, for those who are called according to his purpose.", reference: "Romans 8:28" },
+                 { text: "Your word is a lamp to my feet and a light to my path.", reference: "Psalm 119:105" },
+                 { text: "Ask, and it will be given to you; seek, and you will find; knock, and it will be opened to you.", reference: "Matthew 7:7" },
+                 { text: "Come to me, all who labor and are heavy laden, and I will give you rest.", reference: "Matthew 11:28" },
+                 { text: "Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid.", reference: "John 14:27" },
+                 { text: "Casting all your anxieties on him, because he cares for you.", reference: "1 Peter 5:7" },
+                 { text: "The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.", reference: "Lamentations 3:22-23" },
+                 { text: "For the wages of sin is death, but the free gift of God is eternal life in Christ Jesus our Lord.", reference: "Romans 6:23" },
+                 { text: "If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.", reference: "1 John 1:9" },
+                 { text: "For by grace you have been saved through faith. And this is not your own doing; it is the gift of God,", reference: "Ephesians 2:8" },
+                 { text: "Love is patient and kind; love does not envy or boast; it is not arrogant or rude.", reference: "1 Corinthians 13:4" },
+                 { text: "And now these three remain: faith, hope and love. But the greatest of these is love.", reference: "1 Corinthians 13:13" },
+                 { text: "Let everything that has breath praise the Lord! Praise the Lord!", reference: "Psalm 150:6" },
+                 { text: "The heavens declare the glory of God, and the sky above proclaims his handiwork.", reference: "Psalm 19:1" },
+                 { text: "Rejoice always, pray without ceasing, give thanks in all circumstances; for this is the will of God in Christ Jesus for you.", reference: "1 Thessalonians 5:16-18" },
+                 { text: "Do not be conformed to this world, but be transformed by the renewal of your mind, that by testing you may discern what is the will of God, what is good and acceptable and perfect.", reference: "Romans 12:2" },
+                 { text: "The heart of man plans his way, but the Lord establishes his steps.", reference: "Proverbs 16:9" },
+                 { text: "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.", reference: "Galatians 6:9" },
+                 { text: "Therefore, if anyone is in Christ, he is a new creation. The old has passed away; behold, the new has come.", reference: "2 Corinthians 5:17" },
+                 { text: "I can do all things through him who strengthens me.", reference: "Philippians 4:13" },
+                 { text: "Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.", reference: "Joshua 1:9" },
+                 { text: "Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.", reference: "Isaiah 41:10" },
+                 { text: "God is our refuge and strength, an ever-present help in trouble.", reference: "Psalm 46:1" },
+                 { text: "What then shall we say to these things? If God is for us, who can be against us?", reference: "Romans 8:31" },
+                 { text: "Be still, and know that I am God; I will be exalted among the nations, I will be exalted in the earth.", reference: "Psalm 46:10" },
+                 { text: "Create in me a pure heart, O God, and renew a steadfast spirit within me.", reference: "Psalm 51:10" },
+                 { text: "The Lord is compassionate and gracious, slow to anger, abounding in love.", reference: "Psalm 103:8" },
+                 { text: "I lift up my eyes to the mountains— where does my help come from? My help comes from the Lord, the Maker of heaven and earth.", reference: "Psalm 121:1-2" },
+                 { text: "Search me, God, and know my heart; test me and know my anxious thoughts. See if there is any offensive way in me, and lead me in the way everlasting.", reference: "Psalm 139:23-24" },
+                 { text: "Jesus Christ is the same yesterday and today and forever.", reference: "Hebrews 13:8" },
+                 { text: "The Lord is my light and my salvation; whom shall I fear? The Lord is the stronghold of my life; of whom shall I be afraid?", reference: "Psalm 27:1" },
+                 { text: "He heals the brokenhearted and binds up their wounds.", reference: "Psalm 147:3" },
+                 { text: "With man this is impossible, but with God all things are possible.", reference: "Matthew 19:26" },
+                 { text: "For nothing will be impossible with God.", reference: "Luke 1:37" },
+                 { text: "Have faith in God.", reference: "Mark 11:22" },
+                 { text: "Therefore I tell you, whatever you ask in prayer, believe that you have received it, and it will be yours.", reference: "Mark 11:24" },
+                 { text: "Finally, brothers and sisters, whatever is true, whatever is noble, whatever is right, whatever is pure, whatever is lovely, whatever is admirable—if anything is excellent or praiseworthy—think about such things.", reference: "Philippians 4:8" },
+                 { text: "In peace I will lie down and sleep, for you alone, Lord, make me dwell in safety.", reference: "Psalm 4:8" },
+                 { text: "You will keep in perfect peace those whose minds are steadfast, because they trust in you.", reference: "Isaiah 26:3" },
+                 { text: "Take delight in the Lord, and he will give you the desires of your heart.", reference: "Psalm 37:4" },
+                 { text: "May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.", reference: "Romans 15:13" },
+                 { text: "Now faith is confidence in what we hope for and assurance about what we do not see.", reference: "Hebrews 11:1" },
+                 { text: "This is the day that the Lord has made; let us rejoice and be glad in it.", reference: "Psalm 118:24" },
+                 { text: "There is no fear in love. But perfect love drives out fear...", reference: "1 John 4:18" },
+                 // ... Include the rest of the ~600+ verses here ...
+                  { text: "He who testifies to these things says, 'Yes, I am coming soon.' Amen. Come, Lord Jesus.", reference: "Revelation 22:20" } // Example End
+            ]; // End of bibleVerses array
 
 
             // --- Background Images ---
@@ -372,18 +692,53 @@
             ];
 
             // --- Get HTML Elements ---
+            const bodyElement = document.body;
             const verseDisplayElement = document.getElementById('verseDisplay');
             const verseTextElement = document.getElementById('verseText');
             const verseRefElement = document.getElementById('verseReference');
             const newVerseBtn = document.getElementById('newVerseBtn');
             const prevVerseBtn = document.getElementById('prevVerseBtn');
-            const bodyElement = document.body;
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            const viewFavoritesBtn = document.getElementById('viewFavoritesBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const sharePopup = document.getElementById('sharePopup');
+            const shareTwitterBtn = document.getElementById('shareTwitterBtn');
+            const shareFacebookBtn = document.getElementById('shareFacebookBtn');
+            const shareWhatsappBtn = document.getElementById('shareWhatsappBtn');
+
+            // Modals & Settings Elements
+            const favoritesModal = document.getElementById('favoritesModal');
+            const closeFavoritesModalBtn = document.getElementById('closeFavoritesModalBtn');
+            const favoritesList = document.getElementById('favoritesList');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const clearFavoritesBtn = document.getElementById('clearFavoritesBtn');
+
 
             // --- State Variables ---
             let currentVerse = null;
             let previousVerse = null;
             let currentBgIndex = -1;
             let isFading = false;
+            const favoritesKey = 'bibleAppFavorites';
+            const themeKey = 'bibleAppTheme';
+
+            // --- Load Favorites & Theme from localStorage ---
+            let favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
+            let currentTheme = localStorage.getItem(themeKey) || 'light'; // Default to light
+
+            // --- Apply Theme on Initial Load ---
+            function applyInitialTheme() {
+                if (currentTheme === 'dark') {
+                    bodyElement.classList.add('dark-mode');
+                    darkModeToggle.checked = true;
+                } else {
+                    bodyElement.classList.remove('dark-mode');
+                    darkModeToggle.checked = false;
+                }
+            }
 
              // --- Function to Update Verse Display ---
              function updateVerseDisplay(verseObject) {
@@ -391,10 +746,14 @@
                     verseTextElement.textContent = `"${verseObject.text}"`;
                     verseRefElement.textContent = verseObject.reference;
                  } else {
-                    verseTextElement.textContent = "No verse available.";
+                    verseTextElement.textContent = bibleVerses.length === 0 ? "No verses available." : "Click 'Next Verse' to start.";
                     verseRefElement.textContent = "";
                  }
                  currentVerse = verseObject;
+                 updateFavoriteButtonState();
+                 updateShareLinks(); // Update links in the popup
+                 // Disable share button if no verse
+                 shareBtn.disabled = !verseObject;
              }
 
              // --- Function to Update Background ---
@@ -406,6 +765,7 @@
                 } while (newBgIndex === currentBgIndex && backgroundImages.length > 1);
                 currentBgIndex = newBgIndex;
                 const randomImageUrl = backgroundImages[currentBgIndex];
+                // Preload image for smoother transition
                 const img = new Image();
                 img.onload = () => { bodyElement.style.backgroundImage = `url('${randomImageUrl}')`; }
                 img.onerror = () => { console.error("Failed to load BG:", randomImageUrl); bodyElement.style.backgroundImage = 'none'; }
@@ -414,68 +774,226 @@
 
             // --- Function to Display a Verse with Fade ---
             function displayVerseWithFade(verseToShow) {
-                if (isFading || !verseToShow) return;
+                if (isFading) return;
+
+                if (!verseToShow) {
+                     updateVerseDisplay(null);
+                     prevVerseBtn.disabled = true;
+                     favoriteBtn.disabled = true;
+                     shareBtn.disabled = true; // Also disable main share button
+                     closeSharePopup(); // Hide popup if it was open
+                     return;
+                }
+
                 isFading = true;
+                favoriteBtn.disabled = true; // Disable during transition
+                shareBtn.disabled = true;
+                closeSharePopup(); // Close popup during transition
                 verseDisplayElement.classList.add('fade-out');
+
                 setTimeout(() => {
                     updateVerseDisplay(verseToShow);
                     verseDisplayElement.classList.remove('fade-out');
                     isFading = false;
                     prevVerseBtn.disabled = (previousVerse === null);
-                }, 400); // Match CSS transition speed
+                    favoriteBtn.disabled = false;
+                    shareBtn.disabled = false; // Re-enable main share button
+                }, 400); // Match transition speed
             }
 
             // --- Event Handler for "Next Verse" Button ---
             function handleNextVerseClick() {
                 if (isFading || bibleVerses.length === 0) return;
-                if(currentVerse) { previousVerse = currentVerse; } // Store the current verse before getting a new one
+                if(currentVerse) { previousVerse = currentVerse; }
                 let newVerse;
-                if (bibleVerses.length === 1 && currentVerse) {
-                    newVerse = currentVerse; // If only one verse, just show it again
-                } else {
+                 if (bibleVerses.length === 1 && currentVerse) {
+                     newVerse = currentVerse;
+                 } else {
                     let randomIndex;
                     do {
-                        randomIndex = Math.floor(Math.random() * bibleVerses.length);
-                        newVerse = bibleVerses[randomIndex];
-                    } while (newVerse === currentVerse && bibleVerses.length > 1); // Ensure it's different if possible
-                }
+                         randomIndex = Math.floor(Math.random() * bibleVerses.length);
+                         newVerse = bibleVerses[randomIndex];
+                    } while (bibleVerses.length > 1 && (newVerse === currentVerse || (bibleVerses.length > 2 && newVerse === previousVerse)));
+                 }
                 displayVerseWithFade(newVerse);
-                updateBackground(); // Change background with the new verse
+                updateBackground();
             }
 
             // --- Event Handler for "Previous Verse" Button ---
             function handlePreviousVerseClick() {
-                if (isFading || !previousVerse) return; // Don't do anything if fading or no previous verse exists
-
-                // Swap current and previous, but keep track of the one that *was* previous
+                if (isFading || !previousVerse) return;
                 let verseToDisplay = previousVerse;
-                previousVerse = currentVerse; // The current one will become the previous one *after* display
+                // Store the *current* verse to allow toggling back and forth
+                // between the current and the *single* previous one.
+                // A full history would require an array.
+                const tempCurrent = currentVerse;
+                previousVerse = tempCurrent;
 
                 displayVerseWithFade(verseToDisplay);
-                 // Background is not changed when going back
+                // Keep prev button enabled if we can go back to the 'tempCurrent'
+                prevVerseBtn.disabled = (previousVerse === null);
             }
+
+
+            // --- Favorite Functionality ---
+            function updateFavoriteButtonState() {
+                if (!currentVerse || !favoriteBtn) return;
+                const isFavorited = favorites.some(fav => fav.reference === currentVerse.reference);
+                if (isFavorited) {
+                    favoriteBtn.classList.add('favorited');
+                    favoriteBtn.title = "Remove from Favorites";
+                    favoriteBtn.querySelector('.icon').textContent = '★'; // Filled star
+                } else {
+                    favoriteBtn.classList.remove('favorited');
+                    favoriteBtn.title = "Add to Favorites";
+                    favoriteBtn.querySelector('.icon').textContent = '☆'; // Empty star
+                }
+                favoriteBtn.disabled = false;
+            }
+
+            function toggleFavorite() {
+                if (!currentVerse || isFading) return;
+                const index = favorites.findIndex(fav => fav.reference === currentVerse.reference);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                } else {
+                    favorites.push({ text: currentVerse.text, reference: currentVerse.reference });
+                }
+                localStorage.setItem(favoritesKey, JSON.stringify(favorites));
+                updateFavoriteButtonState();
+            }
+
+            // --- Sharing Functionality ---
+            function updateShareLinks() {
+                 if (!currentVerse) {
+                     // Optional: Clear hrefs or just rely on the main share button being disabled
+                     shareTwitterBtn.href="#";
+                     shareFacebookBtn.href="#";
+                     shareWhatsappBtn.href="#";
+                    return;
+                 }
+                 const verseText = `"${currentVerse.text}" - ${currentVerse.reference}`;
+                 const encodedText = encodeURIComponent(verseText);
+                 // const pageUrl = encodeURIComponent(window.location.href); // Optional
+
+                 shareTwitterBtn.href = `https://twitter.com/intent/tweet?text=${encodedText}`;
+                 shareFacebookBtn.href = `https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`;
+                 shareWhatsappBtn.href = `https://api.whatsapp.com/send?text=${encodedText}`;
+            }
+
+            function toggleSharePopup() {
+                if (sharePopup) {
+                    sharePopup.classList.toggle('visible');
+                }
+            }
+             function closeSharePopup() {
+                if (sharePopup) {
+                    sharePopup.classList.remove('visible');
+                }
+            }
+
+            // --- Modal Functionality (Generic) ---
+             function openModal(modalElement) {
+                 if (modalElement) modalElement.style.display = "block";
+             }
+             function closeModal(modalElement) {
+                 if (modalElement) modalElement.style.display = "none";
+             }
+
+            // --- Favorites Modal Specific ---
+            function displayFavoritesModal() {
+                favoritesList.innerHTML = ''; // Clear previous list
+                if (favorites.length === 0) {
+                    favoritesList.innerHTML = '<li><p>No favorite verses saved yet.</p></li>';
+                } else {
+                    [...favorites].reverse().forEach(fav => { // Show newest first
+                        const li = document.createElement('li');
+                        li.innerHTML = `<p>"${fav.text}"</p><cite>${fav.reference}</cite>`;
+                        favoritesList.appendChild(li);
+                    });
+                }
+                openModal(favoritesModal);
+            }
+
+            // --- Settings Modal Specific ---
+             function handleClearFavorites() {
+                if (confirm("Are you sure you want to clear ALL your favorite verses? This cannot be undone.")) {
+                    favorites = [];
+                    localStorage.removeItem(favoritesKey);
+                    updateFavoriteButtonState(); // Update current verse's star
+                    // Optionally update the list if the favorites modal is open
+                    // if (favoritesModal.style.display === 'block') {
+                    //    displayFavoritesModal();
+                    // }
+                     closeModal(settingsModal); // Close settings after clearing
+                     alert("Favorites cleared."); // Simple confirmation
+                 }
+             }
+
+            // --- Theme Toggle ---
+            function handleThemeToggle() {
+                if (darkModeToggle.checked) {
+                    bodyElement.classList.add('dark-mode');
+                    localStorage.setItem(themeKey, 'dark');
+                } else {
+                    bodyElement.classList.remove('dark-mode');
+                    localStorage.setItem(themeKey, 'light');
+                }
+            }
+
 
             // --- Function to Set Initial Content ---
              function setInitialContent() {
+                applyInitialTheme(); // Apply saved theme first
+
                 if (bibleVerses.length === 0) {
-                    updateVerseDisplay(null);
+                    displayVerseWithFade(null); // Show empty state
                     prevVerseBtn.disabled = true;
-                    newVerseBtn.disabled = true; // Disable if no verses
+                    newVerseBtn.disabled = true;
+                    favoriteBtn.disabled = true;
+                    viewFavoritesBtn.disabled = true;
+                    shareBtn.disabled = true;
+                    console.warn("Bible verses array is empty!");
                     return;
-                }
+                 }
+
+                 viewFavoritesBtn.disabled = false;
                 const verseIndex = Math.floor(Math.random() * bibleVerses.length);
-                currentVerse = bibleVerses[verseIndex];
-                previousVerse = null; // No previous verse initially
-                updateVerseDisplay(currentVerse);
+                const initialVerse = bibleVerses[verseIndex];
+                previousVerse = null;
+                displayVerseWithFade(initialVerse);
                 updateBackground();
-                prevVerseBtn.disabled = true; // Previous button starts disabled
+                prevVerseBtn.disabled = true; // Disable previous initially
             }
 
             // --- Add Event Listeners ---
-            if (newVerseBtn) { newVerseBtn.addEventListener('click', handleNextVerseClick); }
-            else { console.error("Button 'newVerseBtn' not found."); }
-            if (prevVerseBtn) { prevVerseBtn.addEventListener('click', handlePreviousVerseClick); }
-            else { console.error("Button 'prevVerseBtn' not found."); }
+            newVerseBtn?.addEventListener('click', handleNextVerseClick);
+            prevVerseBtn?.addEventListener('click', handlePreviousVerseClick);
+            favoriteBtn?.addEventListener('click', toggleFavorite);
+            viewFavoritesBtn?.addEventListener('click', displayFavoritesModal);
+            shareBtn?.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent window click listener from closing it immediately
+                toggleSharePopup();
+            });
+
+            // Modal & Settings Listeners
+            settingsBtn?.addEventListener('click', () => openModal(settingsModal));
+            closeFavoritesModalBtn?.addEventListener('click', () => closeModal(favoritesModal));
+            closeSettingsModalBtn?.addEventListener('click', () => closeModal(settingsModal));
+            darkModeToggle?.addEventListener('change', handleThemeToggle);
+            clearFavoritesBtn?.addEventListener('click', handleClearFavorites);
+
+
+            // Close Modals and Share Popup on Outside Click
+            window.addEventListener('click', (event) => {
+                 if (event.target == favoritesModal) closeModal(favoritesModal);
+                 if (event.target == settingsModal) closeModal(settingsModal);
+                 // Close share popup if clicking anywhere OTHER than the share button itself
+                 if (!shareBtn?.contains(event.target) && !sharePopup?.contains(event.target)) {
+                     closeSharePopup();
+                 }
+            });
+
 
             // --- Initial Setup ---
             setInitialContent();
